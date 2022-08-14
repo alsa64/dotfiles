@@ -32,7 +32,8 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
+;;(setq doom-theme 'doom-one)
+(setq doom-theme 'doom-nord-light)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -74,3 +75,65 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
+;; https://github.com/doomemacs/doomemacs/issues/2688
+;; Disable explicit confirmation before quitting emacs
+;; "Really quit emacs?"
+;; Yes otherwise I wouldn't have told it to do so.
+(setq confirm-kill-emacs nil)
+
+;; deft configuration
+(setq deft-directory "~/Documents/org"
+      deft-extensions '("org" "txt" "md")
+      deft-recursive t)
+;; org mode
+(setq org-directory "~/Documents/org/")
+
+;; org-journal
+(setq org-journal-dir "~/Documents/org/journal/"
+      org-journal-date-prefix "#+title: "
+      org-journal-time-prefix "* "
+      org-journal-date-format "%a, %Y-%m-%d"
+      org-journal-file-format "%Y-%m-%d.org")
+
+;; org-roam
+(setq org-roam-directory "~/Documents/org/roam/")
+
+;; Set nano theme
+(defun shaunsingh/apply-nano-theme (appearance)
+  "Load theme, taking current system APPEARANCE into consideration."
+  (mapc #'disable-theme custom-enabled-themes)
+  (pcase appearance
+    ('light (nano-light))
+    ('dark (nano-dark))))
+
+(use-package! nano-theme
+  :hook (after-init . nano-light)
+  :config
+  ;; If emacs has been built with system appearance detection
+  ;; add a hook to change the theme to match the system
+  ;; (if (boundp 'ns-system-appearance-change-functions)
+  ;;     (add-hook 'ns-system-appearance-change-functions #'shaunsingh/apply-nano-theme))
+  ;; Now to add some missing faces
+  (custom-set-faces
+   `(flyspell-incorrect ((t (:underline (:color ,nano-light-salient :style line)))))
+   `(flyspell-duplicate ((t (:underline (:color ,nano-light-salient :style line)))))
+
+   `(git-gutter:modified ((t (:foreground ,nano-light-salient))))
+   `(git-gutter-fr:added ((t (:foreground ,nano-light-popout))))
+   `(git-gutter-fr:modified ((t (:foreground ,nano-light-salient))))
+
+   `(lsp-ui-doc-url:added ((t (:background ,nano-light-highlight))))
+   `(lsp-ui-doc-background:modified ((t (:background ,nano-light-highlight))))
+
+   `(vterm-color-red ((t (:foreground ,nano-light-critical))))
+   `(vterm-color-blue ((t (:foreground ,nano-light-salient))))
+   `(vterm-color-green ((t (:foreground ,nano-light-popout))))
+   `(vterm-color-yellow ((t (:foreground ,nano-light-popout))))
+   `(vterm-color-magenta ((t (:foreground ,nano-light-salient))))
+
+   `(scroll-bar ((t (:background ,nano-light-background))))
+
+   `(avy-lead-face-1 ((t (:foreground ,nano-light-subtle))))
+   `(avy-lead-face ((t (:foreground ,nano-light-popout :weight bold))))
+   `(avy-lead-face-0 ((t (:foreground ,nano-light-salient :weight bold))))))
